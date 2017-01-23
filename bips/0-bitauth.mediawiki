@@ -1,0 +1,185 @@
+<pre>
+  BIP:
+  Layer: Applications
+  Title: Message Authentication with BitAuth
+  Author: Jason Dreyzehner <jason@dreyzehner.com>
+  Status: Draft
+  Type: Standards Track
+  Created: 2016-11-25
+</pre>
+
+==Abstract==
+
+BitAuth is a universal identity and message authentication standard using the same mechanisms which authenticate bitcoin transactions.
+
+==Motivation==
+
+Management of digital currency and digital identities have very similar security, risk management, and interoperability requirements. An authentication standard which shares the technical infrastructure of Bitcoin stands to benefit users in terms of user experience, security, and interoperability.
+
+==Specification==
+
+The BitAuth standard enables the signing of a message digest by a BitAuth Identity. This specification describes BitAuth Identity sequencing, BitAuth Signature construction, and signature validation requirements for software compatible with this BIP.
+
+===BitAuth Identities===
+
+A BitAuth Identity – or BitAuth Transaction Chain – is a calculated structure composed of a sequence of bitcoin transactions. Identities are defined by their Authbase – the bitcoin transaction from which the rest of the chain is assembled. Authbase transactions can be referenced by their bitcoin transaction ID (sha256d hash), or authbase ID.
+
+For the purpose of this BIP, a Standard BitAuth Identity is an identity defined by an Authbase transaction which has been mined and confirmed by at least 6 blocks on the blockchain with the highest cumulative proof of work. A BitAuth Identity not satisfying this requirement is referred to as an Off-Chain BitAuth Identity.
+
+===Sequencing Identities===
+
+A transaction chain is assembled starting from the Authbase transaction. If the first transaction output of the Authbase has been spent, the transaction in which it was spent is marked as the next chain tip. If the first transaction output of the next chain tip has been spent, the transaction in which it was spent becomes the next chain tip.
+
+This process continues until a chain tip is found in which the first transaction output is unspent. This final transaction is deemed to be the identity’s Authhead. For Standard BitAuth Identities, only transactions mined and confirmed by at least 6 blocks on the blockchain with the highest cumulative proof of work should be considered.
+
+===Signing Output Selection===
+
+The transaction outputs of the Authhead determine the latest signing requirements of the BitAuth Identity. The first transaction output of the Authhead is deemed the Identity Output. If the transaction has more than one output, the second transaction output is deemed to be the identity’s current Signing Output. If the transaction has only one output, that output is marked as the Signing Output.
+
+===Destroying Identities===
+
+If the first transaction output of the Authhead is provably unspendable (e.g. an OP_RETURN output), the BitAuth Identity is destroyed. Extensions of this standard should clarify how this situation is handled for each extension's use-cases.
+
+===BitAuth Signatures===
+
+BitAuth Signatures are valid (but unmineable) bitcoin transactions which spend the Signing Output to a transaction output containing a digest of the message being signed (the Digest Output). To ensure the transaction can not be included in the blockchain, the Digest Output is set to a value of at least 21,000,000 BTC (`21000000000000 satoshi` – more bitcoin than should ever exist).
+
+The maximum size of a BitAuth signature transaction is MAX_STANDARD_TX_SIZE (currently `100000` bytes).
+
+===Digest Output Contents===
+
+The Digest Output should consist of an `OP_RETURN` followed the UTF8-encoded string identifying the hashing algorithm and the message digest produced using that hashing algorithm. The end of the algorithm identifier is denoted with the UTF8 `NUL` character (code point `0`). While no maximum size should be imposed on the output, if the output causes the transaction to be larger than MAX_STANDARD_TX_SIZE, the signature should be considered invalid.
+
+This BIP leaves the structure of messages, the choice of digest hashing algorithm, and communication protocols to implementors. Please see the Extensions section for use-cases which have been standardized.
+
+===Signature Validation===
+
+BitAuth Signatures are validated in the same way as standard bitcoin transactions with one modification – the total value of the signature transaction's outputs need not be smaller than the total value of its inputs.
+
+While this BIP does not standardize any purpose for BitAuth Signatures to contain inputs other than the input spending the Signing Output, or outputs other than the Digest Output, any additional inputs or outputs should be validated as they would in a normal bitcoin transaction.
+
+The `locktime` field should be honored during validation. It’s recommended that signers set this field to `0`.
+
+===Off-Chain BitAuth Identities===
+
+It is not necessary for all services and protocols using BitAuth to assemble identities by referencing the blockchain. Identity construction, identity migration, and signature validation can all be performed with Off-Chain BitAuth Identities.
+
+This BIP leaves the standardization of Off-Chain BitAuth usage to implementors. Please see the Extensions section for use-cases which have been standardized.
+
+===Extensions===
+
+The scope of this BIP is limited to BitAuth identity sequencing, BitAuth message signing, and BitAuth signature validation. Extensions to this BIP should be used to standardize protocols, file formats, and other use-cases requiring interoperability.
+
+Extensions to this BIP should be listed below.
+
+{|
+| BIP Number || Title
+<!-- |-
+| UNASSIGNED || BitAuth via JSON
+|-
+| UNASSIGNED || BitAuth Software Signing
+|-
+| UNASSIGNED || BitAuth File Formats v1
+|-
+| UNASSIGNED || BitAuth Login and Registration
+|-
+| UNASSIGNED || BitAuth URI Standard
+|-
+| UNASSIGNED || BitAuth-paired SSH -->
+|}
+
+==Rationale==
+
+This section is non normative. It provides insight on the specification, and aims to assist with specific implementation decisions.
+
+===Reversal of Identity Management Responsibility===
+
+Traditionally, security and authentication requirements are determined by the service or protocol requiring the authentication. For example, to login to a web service, a user will often need to provide a password previously set according to the requirements of the service. This forces every service or protocol to either compromise between identities requiring less security and identities requiring more security, or to provide significant, service or protocol-specific optionality to each user demographic.
+
+BitAuth reverses this identity management responsibility, placing it entirely on the owner of the identity (or the user’s software). This aligns incentives properly – only the owner of an identity is in a position to make judgements concerning the value of the identity and the security required. The owner is also in the best position to choose between different identity management software (as they do for bitcoin wallet software). By putting the user in control, it’s possible for significant innovation to occur without requiring technical adoption by services and protocols.
+
+One counterargument to this approach is that users might not adequately secure their identity. We should note that our primary competition is passwords, which despite decades of attempted user-education, still tend to be both chosen poorly and reused by most users. Additionally, BitAuth allows users to reuse (HD-extended) private keys across multiple services, providing good security even for identities which are less valuable to their owner.
+
+===Usage of Bitcoin Script===
+
+While Identity-owners are in the best position to determine an identity’s security and authentication requirements, standardizing a method for them to define these requirements has always been a hard problem. An “authentication requirement definition language” must be well-standardized, so it can be safely and reliably used (even given “untrusted” input); it must be computationally efficient, so it can be validated in resource-constrained environments; and it should be as flexible as possible, so as to allow for user-choice and innovation without protocol changes.
+
+The Bitcoin Script language could be characterized as the world’s most ubiquitous, standardized, and versatile “authentication requirement definition language”. It is precisely designed to accomplish exactly these goals (and for the same reasons). By using the Bitcoin Script language, we inherit history’s best-tested validation functions, already ported to a variety of languages and platforms, with potential bug-for-bug compatibility across services.
+
+By designing this BIP around the usage of standard bitcoin transactions, we further reduce the possibility of individual implementations introducing incompatibilities. In most cases, BitAuth signatures can be validated with little or no modifications to standard bitcoin transaction validation software.
+
+===Authentication Requirement Flexibility===
+
+From a practical perspective, the flexibility of the Bitcoin Script language allows services and protocols to provide an extremely wide range of authentication options via a single authentication method. While web browsers can easily provide one-click, phishing-proof, password-less authentication with a P2PKH Signing Output, identities (like a business) requiring improved security can choose extremely complex, tiered, multisignature P2SH Signing Outputs. Both scenarios are validated by the exact same code – allowing for increased security without incurring additional implementation costs.
+
+===Signing Output Selection===
+
+The Identity and Signing Outputs are defined separately to allow the authentication requirements for each to be independently managed. With this distinction, it’s possible for the identity to be secured by high-latency (like a very large multi-signature Identity Output) or offline systems while the signing capability remains available for low-latency use cases (like a a trusted web server). Compromises of the Signing Output are non-catastrophic, and can be rectified without additional protocols or standards.
+
+To reduce transaction size, implementations not requiring this compartmentalization can include only one output in the Authhead. In this case, the single output serves as both the Identity Output and Signing Output.
+
+===Standard vs. Off-Chain Identities===
+
+By referencing the blockchain to sequence standard identities, implementations can incur a number of benefits from Bitcoin’s network consensus.
+
+====Master Key Revocation====
+
+In any cryptographic scheme allowing for the migration of a digital identity from one set of credentials to another, it is fundamentally hard to “revoke” the former credential in a way which guarantees full awareness of all validators.
+
+While OpenPGP provides an adequate framework for such a system, it is heavily dependent on user-driven workflows, where participants rely on a web of trust to gain degrees of certainty about a change. Even with proper use of the master-subkey system, a master key compromised at any time in the future provides an attacker with the ability to rewrite history with the same powers as the current identity-owner. Such compromises can only be resolved by the web of trust.
+
+Standard BitAuth identities solve this problem by relying on Bitcoin’s double-spend protections to provide an unmistakable, deterministic means of “revoking” the Identity Output.
+
+For example: assume a growing startup begins signing their software with an identity initially controlled by a 2-of-2 multisig identity output, shared between two early developers. Years into the future, the identity’s security is upgraded to 5-of-5 multisig, shared amongst several departments, with a fallback to a majority of the company’s board of directors. Using an off-chain identity, notwithstanding additional protocols or verification methods, it is impossible for a validator to properly choose between the legitimate identity transaction chain and a malicious chain which could be created by the two early developers. Standard identities provide an SPV-verifiable option for choosing the legitimate chain.
+
+====Secure Authentication Reset====
+
+Practically, the blockchain-reliance of standard identities also allows services to avoid using email addresses or phone numbers for authentication reset options – an often poorly-implemented and insecure part of modern authentication systems. In many cases, these options need not be software-implemented at all.
+
+Should the keys controlling a signing output be compromised, the keys controlling an identity output are not necessarily compromised, and can still securely migrate the authhead. As the use of Bitcoin and BitAuth grows, client-side software and user experience improvements can also make “lost credentials“ a much less common problem.
+
+On an ecosystem level, this also provides better isolation of concerns in client software. BitAuth-compatible wallets can focus on security, and need not communicate with all validators when authentication requirements for an identity change. A single transaction can be broadcast which modifies the authhead, modifying the authentication requirements referenced by all validators before a new signature is accepted.
+
+====Identity Meta-Protocols====
+
+Using a standard BitAuth identity can also provide a base for other meta-protocols which associate information with that identity. For example, with a simple implementer-defined OP_RETURN protocol, clients can easily validate that they received the exact same copy of signed software as all other downloaders.
+
+Please see the Extensions section for use-cases which have been standardized.
+
+====Benefits of Off-Chain Identities====
+
+While Off-Chain BitAuth identities do not (without the implementation of other protocols) provide the above benefits, they do provide some advantages over standard identities.
+
+One downside of standardizing BitAuth Identities as on-chain structures is the requirement of a mining fee to make "commits" to an identity. As the price of block space increases, implementations using standard identities become more expensive. Future versions of this specification can standardize other methods of establishing BitAuth Identities with smaller fee requirements.
+
+Off-chain BitAuth identities can also provide flexibility in cases where a new transaction type will not be relayed by the Bitcoin network, but would be valid if mined. Until the new transaction type is included in the `isStandard()` transaction validation function, it might difficult to establish and maintain a standard identity with such authentication requirements.
+
+===6 Confirmation Requirement===
+
+All standard BitAuth implementations will need to implement logic to handle new, unconfirmed transactions which, if confirmed, would advance an identity and replace the current authhead. It’s important that unconfirmed transactions not be included in BitAuth identities, as a double-spent Identity Output could cause the recognized transaction chain to diverge between BitAuth implementations.
+
+By standardizing a specific, required number of confirmations, we remove ambiguity and potential conflicts between implementations. This decision also sets precise expectations for update-lag across services and protocols. The number 6 is chosen because it is already a commonly used number for practically-complete confirmation in the bitcoin ecosystem, and targets a standard 1 hour to complete.
+
+Extensions requiring faster or immediate revocations or authentication requirement changes can clearly define additional protocols for communicating that information. Future versions of the standard may also allow faster bitcoin transaction confirmation options to be taken into account by BitAuth.
+
+===Handling of Funds===
+
+For standard identities, the format of an acceptable BitAuth transaction is intentionally very flexible – the only invalid authhead is the precise format which destroys any identity leading to it. This makes authbase transactions indistinguishable from normal bitcoin transactions, offering users plausible-deniability and better censorship resistance.
+
+This flexibility makes it possible for identity-owners to avoid storing bitcoin value in the identity itself. Dust output values can be used for both the Identity Output and the Signing Output. To pay for transaction fees, other inputs can be added to the transaction (in any order), and any number of change outputs can be included after the new Identity and Signing Outputs.
+
+===Strengthening the Bitcoin Network===
+
+The existence of BitAuth, and the reliance of standard identities on the blockchain, also provides several benefits to the Bitcoin network.
+
+Organizations and protocols implementing BitAuth-based authentication are strongly incentivised to run fully-validating nodes on the Bitcoin network. While it's possible to obtain a standard identity's authhead via SPV-validation, establishing a trusted, fully-validating node eliminates some types of denial-of-service attacks (to which other authentication standards, like OAuth, are very vulnerable).
+
+Additionally, the wide adoption of BitAuth provides another proving ground for open source implementation of cryptographic functions relied upon by bitcoin. Both Bitcoin and BitAuth benefit from the addition bug and security reviews performed on these open source libraries.
+
+==Reference Implementation==
+
+BitAuth2017 : https://github.com/bitjson/bitauth2017
+
+==Copyright==
+
+This document is placed in the public domain.
