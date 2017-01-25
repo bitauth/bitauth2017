@@ -2,7 +2,7 @@
   BIP:
   Layer: Applications
   Title: Message Authentication with BitAuth
-  Author: Jason Dreyzehner <jason@dreyzehner.com>
+  Author: Jason Dreyzehner <bitauth@bitjson.com>
   Status: Draft
   Type: Standards Track
   Created: 2016-11-25
@@ -10,7 +10,7 @@
 
 ==Abstract==
 
-BitAuth is a universal identity and message authentication standard using the same mechanisms which authenticate bitcoin transactions.
+BitAuth is a universal identity resolution and message authentication standard which uses the same mechanisms that authenticate bitcoin transactions.
 
 ==Motivation==
 
@@ -22,7 +22,7 @@ The BitAuth standard enables the signing of a message digest by a BitAuth Identi
 
 ===BitAuth Identities===
 
-A BitAuth Identity – or BitAuth Transaction Chain – is a calculated structure composed of a sequence of bitcoin transactions. Identities are defined by their Authbase – the bitcoin transaction from which the rest of the chain is assembled. Authbase transactions can be referenced by their bitcoin transaction ID (sha256d hash), or authbase ID.
+A BitAuth Identity – or BitAuth Transaction Chain – is a calculated structure composed of a sequence of bitcoin transactions. Identities are defined by their Authbase – the bitcoin transaction from which the rest of the chain is assembled. Authbase transactions can be referenced by their bitcoin transaction ID, or authbase ID.
 
 For the purpose of this BIP, a Standard BitAuth Identity is an identity defined by an Authbase transaction which has been mined and confirmed by at least 6 blocks on the blockchain with the highest cumulative proof of work. A BitAuth Identity not satisfying this requirement is referred to as an Off-Chain BitAuth Identity.
 
