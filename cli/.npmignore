@@ -1,0 +1,5 @@
+*.spec.js
+*.spec.js.map
+src
+tsconfig.json
+tslint.json

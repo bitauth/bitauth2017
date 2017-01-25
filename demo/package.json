@@ -1,0 +1,46 @@
+{
+  "name": "bitauth-cli",
+  "version": "0.0.1",
+  "description": "a simple BitAuth file validation CLI",
+  "main": "build/index.js",
+  "repository": "https://github.com/bitjson/bitauth",
+  "author": "Jason Dreyzehner <jason@dreyzehner.com>",
+  "license": "MIT",
+  "scripts": {
+    "install": "yarn build",
+    "build": "trash build && tsc",
+    "lint": "tslint src/**/*.ts",
+    "test": "yarn lint",
+    "watch:tsc": "trash build && tsc -w",
+    "genkey": "node build/generatePrivate.js && yarn derive",
+    "derive": "node build/derivePublic.js",
+    "genid": "node build/createAuthtx.js",
+    "broadcast": "node build/broadcastAuthtx.js",
+    "sign": "node build/sign.js",
+    "verify": "node build/verify.js"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "devDependencies": {
+    "@types/node": "^0.0.2",
+    "trash-cli": "^1.4.0",
+    "tslint": "^4.0.2",
+    "tslint-config-standard": "^2.0.0",
+    "typescript": "^2.1.5"
+  },
+  "keywords": [
+    "bitauth",
+    "bitcoin",
+    "spv",
+    "authentication",
+    "cli"
+  ],
+  "dependencies": {
+    "@types/chalk": "^0.4.31",
+    "@types/request": "^0.0.39",
+    "bitauth": "file:../lib",
+    "chalk": "^1.1.3",
+    "request": "^2.79.0"
+  }
+}

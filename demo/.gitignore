@@ -1,0 +1,6 @@
+public.json
+private.json
+authhead.bitcointx
+signature.bitauthsig
+node_modules
+build

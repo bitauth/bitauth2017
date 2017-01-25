@@ -1,0 +1,47 @@
+{
+  "name": "bitauth-cli",
+  "version": "0.0.1",
+  "description": "a simple BitAuth file validation CLI",
+  "main": "build/index.js",
+  "repository": "https://github.com/bitjson/bitauth",
+  "author": "Jason Dreyzehner <jason@dreyzehner.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "yarn build",
+    "build": "trash build && tsc",
+    "lint": "tslint src/**/*.ts",
+    "unit": "yarn build && ava",
+    "test": "yarn lint && yarn unit",
+    "watch:tsc": "trash build && tsc -w",
+    "watch:ava": "ava --watch --verbose"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "devDependencies": {
+    "@types/node": "^0.0.2",
+    "ava": "^0.17.0",
+    "trash-cli": "^1.4.0",
+    "tslint": "^4.0.2",
+    "tslint-config-standard": "^2.0.0",
+    "typescript": "^2.1.5"
+  },
+  "keywords": [
+    "bitauth",
+    "bitcoin",
+    "spv",
+    "authentication",
+    "cli"
+  ],
+  "ava": {
+    "files": [
+      "build/**/*.spec.js"
+    ],
+    "source": [
+      "build/**/*"
+    ]
+  },
+  "dependencies": {
+    "bcoin": "https://github.com/bitjson/bcoin.git"
+  }
+}

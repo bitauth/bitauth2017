@@ -1,0 +1,55 @@
+{
+  "name": "bitauth",
+  "version": "0.0.1",
+  "description": "a javascript BitAuth implementation",
+  "main": "build/index",
+  "repository": "https://github.com/bitjson/bitauth",
+  "author": "Jason Dreyzehner <jason@dreyzehner.com>",
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "yarn build",
+    "build": "trash build && tsc",
+    "lint": "tslint src/**/*.ts",
+    "unit": "yarn build && nyc ava",
+    "test": "yarn lint && yarn unit",
+    "watch:tsc": "trash build && tsc -w",
+    "watch:ava": "ava --watch --verbose",
+    "coverage": "nyc report --reporter=html && open coverage/index.html",
+    "send-coverage": "nyc report --reporter=lcov > coverage.lcov && codecov",
+    "docs": "typedoc src/index.ts --mode file --theme minimal --out build/docs && open build/docs/index.html"
+  },
+  "engines": {
+    "node": ">=6"
+  },
+  "devDependencies": {
+    "@types/node": "^0.0.2",
+    "ava": "^0.17.0",
+    "bcoin": "https://github.com/bitjson/bcoin.git",
+    "codecov": "^1.0.1",
+    "nyc": "^10.0.0",
+    "trash-cli": "^1.4.0",
+    "tslint": "^4.0.2",
+    "tslint-config-standard": "^2.0.0",
+    "typedoc": "^0.5.1",
+    "typescript": "^2.1.5"
+  },
+  "keywords": [
+    "bitauth",
+    "bitcoin",
+    "authentication"
+  ],
+  "nyc": {
+    "exclude": [
+      "**/*.spec.js"
+    ]
+  },
+  "ava": {
+    "files": [
+      "build/**/*.spec.js"
+    ],
+    "source": [
+      "build/**/*"
+    ]
+  },
+  "dependencies": {}
+}
