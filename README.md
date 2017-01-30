@@ -9,9 +9,26 @@ Monorepo for the BitAuth2017 protocol standard. [(full specification)](/bips/0-b
 - [BitAuth Issue Tracker](https://github.com/bitjson/bitauth/issues)
 
 ### Watch the Presentation
-
-(Link will go here when it's available.)
-The [BitAuth presentation slides](https://bitauth.bitjson.com/) are also available.
+[![BitAuth2017 Presentation](/assets/bitauth2017-presentation.png)](https://youtu.be/fJGZ44I_FHE?t=2m34s)
+#### Jump to Presentation Section:
+- [Part 1: Authenticating Bitcoin Transactions](https://youtu.be/fJGZ44I_FHE?t=3m41s) [(slide &rarr;)](https://bitauth.bitjson.com/#/1)
+- [Part 2: Static Authentication vs. Scriptable Authentication](https://youtu.be/fJGZ44I_FHE?t=36m18s) [(slide &rarr;)](https://bitauth.bitjson.com/#/14)
+- [Part 3: Scriptable Authentication & the Blockchain](https://youtu.be/fJGZ44I_FHE?t=50m36s) [(slide &rarr;)](https://bitauth.bitjson.com/#/19)
+  - [Why use Bitcoin Script?](https://youtu.be/fJGZ44I_FHE?t=50m36s) [(slide &rarr;)](https://bitauth.bitjson.com/#/20)
+  - [Why use the Blockchain for identities?](https://youtu.be/fJGZ44I_FHE?t=55m23s) [(slide &rarr;)](https://bitauth.bitjson.com/#/22)
+  - [How do we create an identity on the blockchain?](https://youtu.be/fJGZ44I_FHE?t=57m12s) [(slide &rarr;)](https://bitauth.bitjson.com/#/24)
+  - [Authbase Creation](https://youtu.be/fJGZ44I_FHE?t=57m12s) [(slide &rarr;)](https://bitauth.bitjson.com/#/25)
+  - [Authhead Migration](https://youtu.be/fJGZ44I_FHE?t=1h1m43s) [(slide &rarr;)](https://bitauth.bitjson.com/#/27)
+  - [Authbase Resolution](https://youtu.be/fJGZ44I_FHE?t=1h3m36s) [(slide &rarr;)](https://bitauth.bitjson.com/#/28)
+  - [BitAuth Signatures](https://youtu.be/fJGZ44I_FHE?t=1h9m28s) [(slide &rarr;)](https://bitauth.bitjson.com/#/29)
+  - [BitAuth Layer 2 Protocols](https://youtu.be/fJGZ44I_FHE?t=1h15m30s) [(slide &rarr;)](https://bitauth.bitjson.com/#/30)
+- [Part 4: Use Cases & Implications](https://youtu.be/fJGZ44I_FHE?t=1h18m58s) [(slide &rarr;)](https://bitauth.bitjson.com/#/32)
+  - [User-friendly, secure, software signing](https://youtu.be/fJGZ44I_FHE?t=1h19m6s) [(slide &rarr;)](https://bitauth.bitjson.com/#/33)
+  - [Secure Application Update Signing (Android & iOS)](https://youtu.be/fJGZ44I_FHE?t=1h22m28s) [(slide &rarr;)](https://bitauth.bitjson.com/#/34)
+  - [OS-Level HD Key Derivation](https://youtu.be/fJGZ44I_FHE?t=1h38m19s) [(slide &rarr;)](https://bitauth.bitjson.com/#/35)
+  - [Phishing-proof login](https://youtu.be/fJGZ44I_FHE?t=1h38m19s) [(slide &rarr;)](https://bitauth.bitjson.com/#/36)
+  - [Phishing-proof, multifactor login (no resets) login](https://youtu.be/fJGZ44I_FHE?t=1h46m49s) [(slide &rarr;)](https://bitauth.bitjson.com/#/37)
+  - [Big services running full nodes](https://youtu.be/fJGZ44I_FHE?t=1h53m53s) [(slide &rarr;)](https://bitauth.bitjson.com/#/38)
 
 ### Try the Demo CLI
 
