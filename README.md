@@ -4,7 +4,7 @@ Monorepo for the BitAuth2017 protocol standard. [(full specification)](/bips/0-b
 
 ### Get Involved
 - [BitAuth on Twitter](https://twitter.com/bitauth)
-- [BitAuth Slack Group](https://bitauthtalk.bitjson.com/)
+- [BitAuth Spectrum Chat](https://spectrum.chat/bitauth)
 - [BitAuth Reddit](https://www.reddit.com/r/BitAuth/)
 - [BitAuth Issue Tracker](https://github.com/bitjson/bitauth/issues)
 
